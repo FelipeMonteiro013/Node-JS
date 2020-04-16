@@ -15,18 +15,21 @@ const Post = require("./models/Post");
   
 
 //Rotas
-//###############   Rota com problema  #####################
+
+//Rota de listagem de posts
 app.get('/', function(req,res){
-  Post.all().then(function (posts) {
+  Post.findAll({order:[['id','DESC']]}).then(function (posts) {
     res.render('home',{posts: posts});
   });
-//##########################################################
+});
 
+//Rota de cadastro de posts
 app.get('/cad', function(req,res){
   req.body.conteudo
   res.render('formulario');
 });
 
+//Rota que adiciona o post no banco
 app.post('/add', function(req, res){
   Post.create({
     titulo: req.body.titulo,
@@ -38,8 +41,15 @@ app.post('/add', function(req, res){
   })
 })
 
-});
+//Rota para deletar post
+app.get('/deletar/:id',function (req, res) {
+  Post.destroy({where:{'id': req.params.id}}).then(function () {
+    res.render('deletado')
+  }).catch(function (erro) {
+    res.send('Erro ao deletar a postagem')
+  })
+})
 
 app.listen(8081, function () {
-  console.log('rodando');
+  console.log('Servidor rodando na URL: http://localhost:8081');
 });
